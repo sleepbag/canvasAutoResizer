@@ -33,4 +33,4 @@ you can set resolution and resize strategy dynamically.here is a example use [au
 	// set full container, and ignore Aspect Ratio
 	resizer.setFull();
 	
-	//..and then you can do your canvas game..
+	//..and then you can make your canvas game..
