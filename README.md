@@ -5,11 +5,31 @@ For HTML5-canvas, auto resize and reposition the canvas that we want make a game
 you can set resolution and resize strategy dynamically.here is a example use [auto resize canvas]( http://gurintara.com/project/canvasAutoResizer/test/).
 
 ## Example  usage
-  SlEEPBAG.canvasAutoResizer.load(function(self){
-	self.canvasWidth = 500;
-	self.canvasHeight = 500;
-	var gameArea = self.getGameArea();
-	document.body.appendChild(gameArea);
-});
+	/*
+	* before load setting, you can set your resolution
+	* and append on dom container
+	*/
+	SlEEPBAG.canvasAutoResizer.load(function(self){
+		// set resolution
+		self.canvasWidth = 500;
+		self.canvasHeight = 500;
+		// get game area 
+		var gameArea = self.getGameArea();
+		// append on 
+		document.body.appendChild(gameArea);
+	});
 	
-##
+	var resizer = SlEEPBAG.canvasAutoResizer;
+
+	// get canvas
+	var canvas = resizer.getGameCanvas();
+	// get resolution
+	var resoultion = resizer.getResolution();
+	
+	// set resize to center 
+	resizer.setCenter();
+	
+	// set full container, and ignore Aspect Ratio
+	resizer.setFull();
+	
+	//..and then you can do your canvas game..
