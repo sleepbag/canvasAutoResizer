@@ -83,6 +83,8 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		gameArea.style.marginLeft = 0;
 		gameArea.style.height = "100%";
 		gameArea.style.width = "100%";
+		var parentNode = gameArea.parentNode;
+		
 	}
 
 
@@ -96,10 +98,13 @@ SlEEPBAG.canvasAutoResizer = (function(){
 	* create the canvas, put in and fit the gameArea
 	*/
 	function createCanvas(){
-		var createCanvas = document.createElement("canvas");
-		gameArea.appendChild(createCanvas);
-		createCanvas.id = canvasID;
-		gameCanvas = createCanvas;
+		if(!gameCanvas){
+			var createCanvas = document.createElement("canvas");
+			createCanvas.id = canvasID;
+			gameArea.appendChild(createCanvas);
+			gameCanvas = createCanvas;
+		}
+		
 		gameCanvas.width = self.canvasWidth;
 		gameCanvas.height = self.canvasHeight;
 		gameCanvas.style.top = "0";
@@ -107,6 +112,18 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		gameCanvas.style.right = "0";
 		gameCanvas.style.width = "100%";
 		gameCanvas.style.height = "100%";
+		gameCanvas.style.display = "block";
+		
+		var parentNode = gameArea.parentNode;
+		// while html use <!doc type html> must set the parent style.height
+		while(parentNode){
+			
+			if(parentNode.style){
+				parentNode.style.height = "98%";
+				// 98% -> the scroll bar disappear
+			}
+			parentNode = parentNode.parentNode;
+		}
 	}
 
 
@@ -176,6 +193,11 @@ SlEEPBAG.canvasAutoResizer = (function(){
 			width: self.canvasWidth,
 			height: self.canvasHeight
 		};
+	}
+	
+	self.setGameCanvas = function(canvas){
+		gameCanvas = canvas;
+		gameArea.appendChild(gameCanvas);
 	}
 
 	return self;
