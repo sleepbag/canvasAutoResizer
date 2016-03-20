@@ -6,16 +6,18 @@ function load(){
 	SlEEPBAG.canvasAutoResizer.load(function(self){
 		self.canvasWidth = 500;
 		self.canvasHeight = 500;
+		var canvas = document.createElement("canvas");
 		var gameArea = self.getGameArea();
 		document.body.appendChild(gameArea);
+		self.appendGameElement(canvas);
 	});
 
 	setButtons();
-	var myTimer = setInterval(loop,20); 
+	var myTimer = setInterval(loop,20);
 }
 
 function setButtons(){
-	
+
 	var button_Full = document.createElement('button');
 	var t = document.createTextNode("Full");
 	button_Full.appendChild(t);
@@ -50,7 +52,7 @@ function setButtons(){
 }
 
 function loop(){
-	var c = SlEEPBAG.canvasAutoResizer.getGameCanvas();
+	var c = SlEEPBAG.canvasAutoResizer.getGameElement();
 	var resulotion = SlEEPBAG.canvasAutoResizer.getResolution();
 
 	var ctx = c.getContext("2d");

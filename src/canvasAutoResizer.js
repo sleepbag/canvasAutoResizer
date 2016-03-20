@@ -1,7 +1,7 @@
 this.SlEEPBAG = this.SlEEPBAG || {};
 
-/* 
-* 
+/*
+*
 * reference by http://www.html5rocks.com/en/tutorials/casestudies/gopherwoord-studios-resizing-html5-games/
 * single instance, control the gameArea and canvas size
 */
@@ -11,10 +11,10 @@ SlEEPBAG.canvasAutoResizer = (function(){
 	* private variable
 	*/
 	var gameArea = null;
-	var gameCanvas = null;
+	var gameElement = null;
 
 	var domContainerID = "gameArea";
-	var canvasID = "gameCanvas";
+	var canvasID = "gameElement";
 
 	var self = {};
 
@@ -25,10 +25,10 @@ SlEEPBAG.canvasAutoResizer = (function(){
 
 	self.canvasWidth = 800;
 	self.canvasHeight = 400;
-	
+
 
 	initGameArea();
-	
+
 
 	/*
 	* first use the ScreenSizeManager, must call this method
@@ -38,9 +38,10 @@ SlEEPBAG.canvasAutoResizer = (function(){
 	*/
 	self.load = function load(beforeload) {
 		if(beforeload){
+			document.body.overflow ="hidden";
 			beforeload(self);
 		}
-		createCanvas();
+
 		self.defaultStrategy();
 	}
 
@@ -84,12 +85,12 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		gameArea.style.height = "100%";
 		gameArea.style.width = "100%";
 		var parentNode = gameArea.parentNode;
-		
+
 	}
 
 
 	/*
-	* default resize Strategy 
+	* default resize Strategy
 	*/
 	self.defaultStrategy = self.setCenter;
 
@@ -97,33 +98,18 @@ SlEEPBAG.canvasAutoResizer = (function(){
 	/*
 	* create the canvas, put in and fit the gameArea
 	*/
-	function createCanvas(){
-		if(!gameCanvas){
-			var createCanvas = document.createElement("canvas");
-			createCanvas.id = canvasID;
-			gameArea.appendChild(createCanvas);
-			gameCanvas = createCanvas;
-		}
-		
-		gameCanvas.width = self.canvasWidth;
-		gameCanvas.height = self.canvasHeight;
-		gameCanvas.style.top = "0";
-		gameCanvas.style.bottom = "0";
-		gameCanvas.style.right = "0";
-		gameCanvas.style.width = "100%";
-		gameCanvas.style.height = "100%";
-		gameCanvas.style.display = "block";
-		
-		var parentNode = gameArea.parentNode;
-		// while html use <!doc type html> must set the parent style.height
-		while(parentNode){
-			
-			if(parentNode.style){
-				parentNode.style.height = "98%";
-				// 98% -> the scroll bar disappear
-			}
-			parentNode = parentNode.parentNode;
-		}
+	self.appendGameElement = function appendGameElement(element){
+
+		gameElement = element;
+		gameArea.appendChild(element);
+		gameElement.width = self.canvasWidth;
+		gameElement.height = self.canvasHeight;
+		gameElement.style.top = "0";
+		gameElement.style.bottom = "0";
+		gameElement.style.right = "0";
+		gameElement.style.width = "100%";
+		gameElement.style.height = "100%";
+		gameElement.style.display = "block";
 	}
 
 
@@ -135,7 +121,7 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		gameArea.setAttribute("id", domContainerID);
 	}
 
-	
+
 
 	/*
 	* resize gameArea
@@ -147,7 +133,7 @@ SlEEPBAG.canvasAutoResizer = (function(){
 			var newWidth = parentNode.clientWidth;
 			var newHeight = parentNode.clientHeight;
 			var newWidthToHeight = newWidth / newHeight;
-			
+
 			if (newWidthToHeight > aspectRatio) {
 				newWidth = newHeight * aspectRatio;
 				gameArea.style.height = newHeight + 'px';
@@ -157,31 +143,29 @@ SlEEPBAG.canvasAutoResizer = (function(){
 				gameArea.style.width = newWidth + 'px';
 				gameArea.style.height = newHeight + 'px';
 			}
-			  
-			
+
+
 			/*
 			* if in method setCenter(), we use " gameArea.style.position = "absolute"; "
 			* then use this code.
 			* gameArea.style.marginTop = (-newHeight * 1 / 2 ) + 'px';
 			*/
 
-			/*
-			* because of " gameArea.style.position = "relative" ", 
-			* above the gameArea will produce a 8px Row Height and cause scroll-bar of container.
-			* so we reduce the magic number "8" of margin top
-			*/
-			gameArea.style.marginTop = (-newHeight * 1 / 2 ) - 8 + 'px';
+
+			gameArea.style.marginTop = (-newHeight * 1 / 2 ) + 'px';
 			gameArea.style.marginLeft = (-newWidth * 1 / 2) + 'px';
 
 			/*
 			* reset the resolution
 			*/
-			gameCanvas.width = self.canvasWidth;
-			gameCanvas.height = self.canvasHeight;
+			if(gameElement){
+				gameElement.width = self.canvasWidth;
+				gameElement.height = self.canvasHeight;
+			}
 		}
 
-	self.getGameCanvas = function getGameCanvas() {
-		return gameCanvas;
+	self.getGameElement = function getGameElement() {
+		return gameElement;
 	}
 
 	self.getGameArea = function getGameArea() {
@@ -193,11 +177,6 @@ SlEEPBAG.canvasAutoResizer = (function(){
 			width: self.canvasWidth,
 			height: self.canvasHeight
 		};
-	}
-	
-	self.setGameCanvas = function(canvas){
-		gameCanvas = canvas;
-		gameArea.appendChild(gameCanvas);
 	}
 
 	return self;
