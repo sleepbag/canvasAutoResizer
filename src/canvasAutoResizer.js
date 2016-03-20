@@ -42,7 +42,6 @@ SlEEPBAG.canvasAutoResizer = (function(){
 			beforeload(self);
 		}
 
-		self.defaultStrategy();
 	}
 
 	/*
@@ -66,6 +65,20 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		parentNode.addEventListener('resize', resizeGame, false);
 		window.addEventListener('resize', resizeGame, false);
 		window.addEventListener('orientationchange', resizeGame, false);
+	}
+
+	self.setFix = function setFix(width,height){
+
+
+		gameArea.style.position = "relative";
+		gameArea.style.height = height + 'px';
+		gameArea.style.width = width + 'px';
+
+		fixResizeGame();
+		var parentNode = gameArea.parentNode;
+		parentNode.addEventListener('resize', fixResizeGame, false);
+		window.addEventListener('resize', fixResizeGame, false);
+		window.addEventListener('orientationchange', fixResizeGame, false);
 	}
 
 	/*
@@ -92,7 +105,7 @@ SlEEPBAG.canvasAutoResizer = (function(){
 	/*
 	* default resize Strategy
 	*/
-	self.defaultStrategy = self.setCenter;
+
 
 
 	/*
@@ -121,6 +134,35 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		gameArea.setAttribute("id", domContainerID);
 	}
 
+  function fixResizeGame(){
+
+		var aspectRatio = self.canvasWidth / self.canvasHeight;
+		var parentNode = gameArea.parentNode;
+		var newWidth = parentNode.clientWidth;
+		var newHeight = parentNode.clientHeight;
+		var newWidthToHeight = newWidth / newHeight;
+
+
+
+		gameArea.style.marginTop = (-gameArea.style.height * 1 / 2 ) + 'px';
+		gameArea.style.marginLeft = (-gameArea.style.width * 1 / 2) + 'px';
+
+
+		gameArea.style.left = (newWidth / 2 - self.canvasWidth * 1 / 2) + 'px';
+		gameArea.style.top = (newHeight / 2 - self.canvasHeight * 1 / 2) + 'px';
+
+		//gameArea.style.left = newWidth / 2 + 'px';
+		//gameArea.style.top = newHeight / 2 + 'px';
+
+		/*
+		* reset the resolution
+		*/
+		if(gameElement){
+			gameElement.width = self.canvasWidth;
+			gameElement.height = self.canvasHeight;
+		}
+
+	}
 
 
 	/*
