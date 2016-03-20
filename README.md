@@ -10,6 +10,9 @@ you can set resolution and resize strategy dynamically.here is a example use [au
 	* before load setting, you can set your resolution
 	* and append on dom container
 	*/
+
+	
+
 	SlEEPBAG.canvasAutoResizer.load(function(self){
 		// set resolution
 		self.canvasWidth = 500;
@@ -18,12 +21,16 @@ you can set resolution and resize strategy dynamically.here is a example use [au
 		var gameArea = self.getGameArea();
 		// append on 
 		document.body.appendChild(gameArea);
+		var canvas = document.createElement("canvas");
+		var gameArea = self.getGameArea();
+		document.body.appendChild(gameArea);
+		self.appendGameElement(canvas);
 	});
 	
 	var resizer = SlEEPBAG.canvasAutoResizer;
 
 	// get canvas
-	var canvas = resizer.getGameCanvas();
+	var canvas = resizer.getGameElement();
 	// get resolution
 	var resoultion = resizer.getResolution();
 	
