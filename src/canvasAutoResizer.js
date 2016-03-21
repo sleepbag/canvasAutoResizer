@@ -60,7 +60,7 @@ SlEEPBAG.canvasAutoResizer = (function(){
 	*/
 	self.load = function load(beforeload) {
 		if(beforeload){
-			document.body.overflow ="hidden";
+			document.body.style.overflow ="hidden";
 			beforeload(self);
 		}
 
@@ -189,7 +189,7 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		var newWidthToHeight = newWidth / newHeight;
 
 
-		//var isFirefox = typeof InstallTrigger !== 'undefined';
+
 
 		gameArea.style.marginTop = (-gameArea.style.height * 1 / 2 ) + 'px';
 		gameArea.style.marginLeft = (-gameArea.style.width * 1 / 2) + 'px';
@@ -275,7 +275,9 @@ SlEEPBAG.canvasAutoResizer = (function(){
 			*/
 			var isFirefox = typeof InstallTrigger !== 'undefined';
 			if(!isFirefox){
-				gameArea.style.marginTop = (-newHeight * 1 / 2 ) + 'px';
+				if(gameElement.tagName == "canvas"){
+					gameArea.style.marginTop = (-newHeight * 1 / 2 ) + 'px';
+				}
 			}
 			gameArea.style.marginLeft = (-newWidth * 1 / 2) + 'px';
 
