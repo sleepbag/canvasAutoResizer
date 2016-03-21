@@ -1,5 +1,27 @@
 this.SlEEPBAG = this.SlEEPBAG || {};
 
+function addEvent(evnt, elem, func) {
+   if (elem.addEventListener)  // W3C DOM
+      elem.addEventListener(evnt,func,false);
+   else if (elem.attachEvent) { // IE DOM
+      elem.attachEvent("on"+evnt, func);
+   }
+   else { // No much to do
+      elem[evnt] = func;
+   }
+}
+
+function removeEvent(evnt, elem, func) {
+   if (elem.addEventListener)  // W3C DOM
+      elem.removeEventListener(evnt,func,false);
+   else if (elem.attachEvent) { // IE DOM
+      elem.detachEvent("on"+evnt, func);
+   }
+   else { // No much to do
+      elem[evnt] = func;
+   }
+}
+
 /*
 *
 * reference by http://www.html5rocks.com/en/tutorials/casestudies/gopherwoord-studios-resizing-html5-games/
@@ -56,15 +78,23 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		* gameArea.style.position = "absolute";
 		*/
 		gameArea.style.position = "relative";
-
 		gameArea.style.left = "50%";
 		gameArea.style.top = "50%";
 
 		resizeGame();
 		var parentNode = gameArea.parentNode;
-		parentNode.addEventListener('resize', resizeGame, false);
-		window.addEventListener('resize', resizeGame, false);
-		window.addEventListener('orientationchange', resizeGame, false);
+
+		removeEvent('resize',parentNode,fixResizeGame);
+		removeEvent('resize',window,fixResizeGame);
+		removeEvent('orientationchange',window,fixResizeGame);
+
+		removeEvent('resize',parentNode,resizeFullGame);
+		removeEvent('resize',window,resizeFullGame);
+		removeEvent('orientationchange',window,resizeFullGame);
+
+		addEvent('resize',parentNode,resizeGame);
+		addEvent('resize',window,resizeGame);
+		addEvent('orientationchange',window,resizeGame);
 	}
 
 	self.setFix = function setFix(width,height){
@@ -76,9 +106,18 @@ SlEEPBAG.canvasAutoResizer = (function(){
 
 		fixResizeGame();
 		var parentNode = gameArea.parentNode;
-		parentNode.addEventListener('resize', fixResizeGame, false);
-		window.addEventListener('resize', fixResizeGame, false);
-		window.addEventListener('orientationchange', fixResizeGame, false);
+		removeEvent('resize',parentNode,resizeGame);
+		removeEvent('resize',window,resizeGame);
+		removeEvent('orientationchange',window,resizeGame);
+
+		removeEvent('resize',parentNode,resizeFullGame);
+		removeEvent('resize',window,resizeFullGame);
+		removeEvent('orientationchange',window,resizeFullGame);
+
+
+		addEvent('resize',parentNode,fixResizeGame);
+		addEvent('resize',window,fixResizeGame);
+		addEvent('orientationchange',window,fixResizeGame);
 	}
 
 	/*
@@ -90,9 +129,16 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		gameArea.style.left = "0%";
 		gameArea.style.top = "0%";
 		var parentNode = gameArea.parentNode;
-		parentNode.removeEventListener('resize', resizeGame, false);
-		window.removeEventListener('resize', resizeGame, false);
-		window.removeEventListener('orientationchange', resizeGame, false);
+
+
+
+		removeEvent('resize',parentNode,resizeGame);
+		removeEvent('resize',window,resizeGame);
+		removeEvent('orientationchange',window,resizeGame);
+
+		addEvent('resize',parentNode,resizeFullGame);
+		addEvent('resize',window,resizeFullGame);
+		addEvent('orientationchange',window,resizeFullGame);
 		gameArea.style.marginTop = 0;
 		gameArea.style.marginLeft = 0;
 		gameArea.style.height = "100%";
@@ -143,6 +189,7 @@ SlEEPBAG.canvasAutoResizer = (function(){
 		var newWidthToHeight = newWidth / newHeight;
 
 
+		//var isFirefox = typeof InstallTrigger !== 'undefined';
 
 		gameArea.style.marginTop = (-gameArea.style.height * 1 / 2 ) + 'px';
 		gameArea.style.marginLeft = (-gameArea.style.width * 1 / 2) + 'px';
@@ -164,6 +211,40 @@ SlEEPBAG.canvasAutoResizer = (function(){
 
 	}
 
+	function resizeFullGame() {
+
+			var aspectRatio = self.canvasWidth / self.canvasHeight;
+			var parentNode = gameArea.parentNode;
+			var newWidth = parentNode.clientWidth;
+			var newHeight = parentNode.clientHeight;
+			var newWidthToHeight = newWidth / newHeight;
+
+			if (newWidthToHeight > aspectRatio) {
+				newWidth = newHeight * aspectRatio;
+				gameArea.style.height = newHeight + 'px';
+				gameArea.style.width = newWidth + 'px';
+			} else {
+				newHeight = newWidth / aspectRatio;
+				gameArea.style.width = newWidth + 'px';
+				gameArea.style.height = newHeight + 'px';
+			}
+
+
+			/*
+			* if in method setCenter(), we use " gameArea.style.position = "absolute"; "
+			* then use this code.
+			* gameArea.style.marginTop = (-newHeight * 1 / 2 ) + 'px';
+			*/
+
+
+			/*
+			* reset the resolution
+			*/
+			if(gameElement){
+				gameElement.width = self.canvasWidth;
+				gameElement.height = self.canvasHeight;
+			}
+		}
 
 	/*
 	* resize gameArea
@@ -192,9 +273,10 @@ SlEEPBAG.canvasAutoResizer = (function(){
 			* then use this code.
 			* gameArea.style.marginTop = (-newHeight * 1 / 2 ) + 'px';
 			*/
-
-
-			gameArea.style.marginTop = (-newHeight * 1 / 2 ) + 'px';
+			var isFirefox = typeof InstallTrigger !== 'undefined';
+			if(!isFirefox){
+				gameArea.style.marginTop = (-newHeight * 1 / 2 ) + 'px';
+			}
 			gameArea.style.marginLeft = (-newWidth * 1 / 2) + 'px';
 
 			/*
